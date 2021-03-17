@@ -23,7 +23,7 @@ def download_xkcd(start_comic, end_comic):
 
         # Download the image.
         print('Downloading image %s...' % comic_url)
-        res = requests.get(comic_url)
+        res = requests.get('http:' + comic_url)
         res.raise_for_status()
         # Save the image to ./xkcd.
         with open(os.path.join('xkcd', os.path.basename(comic_url)), 'wb') as image_file:
@@ -31,5 +31,14 @@ def download_xkcd(start_comic, end_comic):
                 image_file.write(chunk)
 
 
-# TODO: Create and start the Thread objects.
-# TODO: Wait for all threads to end.
+# Create and start the Thread objects.
+download_threads = []  # a list of all the threads obj
+for i in range(1, 1400, 100):    # loop 14 times, creates 14 threads
+    download_thread = threading.Thread(target=download_xkcd, args=(i, i + 99))
+    download_threads.append(download_thread)
+    download_thread.start()
+
+# Wait for all threads to end.
+for download_thread in download_threads:
+    download_thread.join()
+print('Done.')
